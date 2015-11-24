@@ -1,13 +1,16 @@
 skype:
-  image: jess/skype
+  build: .
+  environment:
+    - SKYPE_USER=skype
+    - PULSE_SERVER=pulseaudio
+    - DISPLAY=unix${DISPLAY}
+    - XAUTHORITY=/tmp/.docker.xauth
   volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     - /tmp/.docker.xauth:/tmp/.docker.xauth
     - /dev/snd:/dev/snd
     - /dev/video0:/dev/video0
-  environment:
-    - PULSE_SERVER=pulseaudio
-    - DISPLAY=unix:0.0
+    - ${HOME}/.Skype:/home/skype/.Skype
   links:
     - pulseaudio
 
