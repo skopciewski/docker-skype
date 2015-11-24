@@ -1,0 +1,23 @@
+skype:
+  image: jess/skype
+  volumes:
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    - /tmp/.docker.xauth:/tmp/.docker.xauth
+    - /dev/snd:/dev/snd
+    - /dev/video0:/dev/video0
+  environment:
+    - PULSE_SERVER=pulseaudio
+    - DISPLAY=unix:0.0
+  links:
+    - pulseaudio
+
+pulseaudio:
+  image: jess/pulseaudio
+  ports:
+    - 4713:4713
+  privileged: true
+  volumes:
+    - /etc/localtime:/etc/localtime
+    - /var/run/dbus:/var/run/dbus
+    - /etc/machine-id:/etc/machine-id
+    - /dev/snd:/dev/snd
