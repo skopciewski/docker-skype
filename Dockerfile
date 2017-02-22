@@ -9,7 +9,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv 7212620B \
  && echo "deb http://archive.canonical.com/ trusty partner" >> /etc/apt/sources.list \
  && dpkg --add-architecture i386 \
  && apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y pulseaudio:i386 skype:i386 \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y pulseaudio:i386 skype:i386 sudo \
  && rm -rf /var/lib/apt/lists/*
 
 COPY data/entrypoint.sh /sbin/entrypoint.sh
