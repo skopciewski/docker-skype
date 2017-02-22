@@ -1,4 +1,5 @@
 #!/bin/bash
+[[ "$TRACE" ]] && set -x
 set -e
 
 USER_UID=${USER_UID:-1000}
@@ -36,7 +37,7 @@ grant_access_to_video_devices() {
 
 launch_skype() {
   cd /home/${SKYPE_USER}
-  exec sudo -HEu ${SKYPE_USER} PULSE_SERVER=/run/pulse/native QT_GRAPHICSSYSTEM="native" $@
+  exec sudo -HEu ${SKYPE_USER} PULSE_SERVER=/run/pulse/native QT_GRAPHICSSYSTEM="native" skype
 }
 
 case "$1" in

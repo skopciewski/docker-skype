@@ -1,4 +1,6 @@
 #!/bin/bash
+[[ "$TRACE" ]] && set -x
+set -e
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 SKYPE_USER=skype
@@ -12,15 +14,15 @@ DOWNLOAD_DIR=~/Downloads
 
 cleanup_stopped_skype_instances(){
   echo "Cleaning up stopped skype instances..."
-  for c in $(${SUDO} docker ps -a -q)
+  for c in $(docker ps -a -q)
   do
-    image="$(${SUDO} docker inspect -f {{.Config.Image}} ${c})"
+    image="$(docker inspect -f {{.Config.Image}} ${c})"
     if [ "${image}" == "${DOCKER_IMAGE}" ]; then
-      running=$(${SUDO} docker inspect -f {{.State.Running}} ${c})
+      running=$(docker inspect -f {{.State.Running}} ${c})
       if [ "${running}" = "true" ]; then
-        ${SUDO} docker stop "${c}" >/dev/null
+        docker stop "${c}" >/dev/null
       fi
-      ${SUDO} docker rm "${c}" >/dev/null
+      docker rm "${c}" >/dev/null
     fi
   done
 }
@@ -57,8 +59,8 @@ prepare_docker_volume_parameters
 prepare_docker_device_parameters
 
 echo "Starting skype..."
-${SUDO} docker run -d \
+docker run -d \
   ${ENV_VARS} \
   ${VIDEO_DEVICES} \
   ${VOLUMES} \
-${DOCKER_IMAGE} skype $@ >/dev/null
+${DOCKER_IMAGE} skype >/dev/null
