@@ -1,0 +1,64 @@
+#!/bin/bash
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+SKYPE_USER=skype
+DOCKER_IMAGE=skopciewski/skype
+
+USER_UID=$(id -u)
+USER_GID=$(id -g)
+
+XSOCK=/tmp/.X11-unix
+DOWNLOAD_DIR=~/Downloads
+
+cleanup_stopped_skype_instances(){
+  echo "Cleaning up stopped skype instances..."
+  for c in $(${SUDO} docker ps -a -q)
+  do
+    image="$(${SUDO} docker inspect -f {{.Config.Image}} ${c})"
+    if [ "${image}" == "${DOCKER_IMAGE}" ]; then
+      running=$(${SUDO} docker inspect -f {{.State.Running}} ${c})
+      if [ "${running}" = "true" ]; then
+        ${SUDO} docker stop "${c}" >/dev/null
+      fi
+      ${SUDO} docker rm "${c}" >/dev/null
+    fi
+  done
+}
+
+prepare_docker_env_parameters() {
+  ENV_VARS+=" --env=USER_UID=${USER_UID}"
+  ENV_VARS+=" --env=USER_GID=${USER_GID}"
+  ENV_VARS+=" --env=DISPLAY"
+  ENV_VARS+=" --env=TZ=$(date +%Z)"
+}
+
+prepare_docker_volume_parameters() {
+  VOLUMES+=" --volume=${HOME}/.Skype:/home/${SKYPE_USER}/.Skype"
+  VOLUMES+=" --volume=${DOWNLOAD_DIR}:/home/${SKYPE_USER}/Downloads"
+  VOLUMES+=" --volume=${XSOCK}:${XSOCK}"
+  VOLUMES+=" --volume=/run/user/${USER_UID}/pulse:/run/pulse"
+}
+
+
+prepare_docker_device_parameters() {
+  # enumerate video devices for webcam support
+  VIDEO_DEVICES=
+  for device in /dev/video*
+  do
+    if [ -c $device ]; then
+      VIDEO_DEVICES="${VIDEO_DEVICES} --device $device:$device"
+    fi
+  done
+}
+
+cleanup_stopped_skype_instances
+prepare_docker_env_parameters
+prepare_docker_volume_parameters
+prepare_docker_device_parameters
+
+echo "Starting skype..."
+${SUDO} docker run -d \
+  ${ENV_VARS} \
+  ${VIDEO_DEVICES} \
+  ${VOLUMES} \
+${DOCKER_IMAGE} skype $@ >/dev/null

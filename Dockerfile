@@ -1,11 +1,18 @@
-FROM jess/skype
+FROM ubuntu:trusty-20170119
 
 ENV SKYPE_USER=skype
 
-RUN apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
+RUN echo 'APT::Install-Recommends 0;' >> /etc/apt/apt.conf.d/01norecommends \
+  && echo 'APT::Install-Suggests 0;' >> /etc/apt/apt.conf.d/01norecommends 
 
-COPY data/entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv 7212620B \
+ && echo "deb http://archive.canonical.com/ trusty partner" >> /etc/apt/sources.list \
+ && dpkg --add-architecture i386 \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y pulseaudio:i386 skype:i386 \
+ && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["skype"]
+COPY data/entrypoint.sh /sbin/entrypoint.sh
+RUN chmod 755 /sbin/entrypoint.sh
+
+ENTRYPOINT ["/sbin/entrypoint.sh"]
