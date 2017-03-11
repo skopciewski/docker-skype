@@ -37,7 +37,7 @@ grant_access_to_video_devices() {
 
 launch_skype() {
   cd /home/${SKYPE_USER}
-  exec sudo -HEu ${SKYPE_USER} PULSE_SERVER=/run/pulse/native QT_GRAPHICSSYSTEM="native" skype
+  exec sudo -HEu ${SKYPE_USER} PULSE_SERVER=/run/pulse/native QT_GRAPHICSSYSTEM="native" LD_PRELOAD=/usr/lib/i386-linux-gnu/libv4l/v4l1compat.so skype
 }
 
 case "$1" in
