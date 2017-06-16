@@ -1,6 +1,6 @@
 # Introduction
 
-`Dockerfile` to create a Docker container image with Skype for Linux with support for audio/video calls.
+`Dockerfile` to create a Docker container image with Skype v5 for Linux with support for audio/video calls.
 The image uses Pulseaudio unix domain sockets on the host to enable audio/video support in Skype.
 
 # Usage
