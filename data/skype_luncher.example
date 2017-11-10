@@ -35,7 +35,7 @@ prepare_docker_env_parameters() {
 }
 
 prepare_docker_volume_parameters() {
-  VOLUMES+=" --volume=${HOME}/.Skype:/home/${SKYPE_USER}/.Skype"
+  VOLUMES+=" --volume=${HOME}/.config/skypeforlinux:/home/${SKYPE_USER}/.config/skypeforlinux"
   VOLUMES+=" --volume=${DOWNLOAD_DIR}:/home/${SKYPE_USER}/Downloads"
   VOLUMES+=" --volume=${XSOCK}:${XSOCK}"
   VOLUMES+=" --volume=/run/user/${USER_UID}/pulse:/run/pulse"
@@ -57,6 +57,7 @@ cleanup_stopped_skype_instances
 prepare_docker_env_parameters
 prepare_docker_volume_parameters
 prepare_docker_device_parameters
+xhost +
 
 echo "Starting skype..."
 docker run -d \
