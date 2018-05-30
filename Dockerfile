@@ -1,4 +1,4 @@
-FROM ubuntu:artful
+FROM ubuntu:latest
 
 ENV SKYPE_USER=skype
 
